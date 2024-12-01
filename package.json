@@ -1,0 +1,67 @@
+{
+  "private": true,
+  "name": "tairo",
+  "version": "1.5.0",
+  "type": "module",
+  "main": "./nuxt.config.ts",
+  "packageManager": "pnpm@8.14.0",
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=8"
+  },
+  "workspaces": [
+    ".demo",
+    ".app",
+    "layers/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter=app dev",
+    "build": "pnpm --filter=app build",
+    "generate": "pnpm --filter=app generate",
+    "demo:dev": "pnpm --filter=demo dev",
+    "demo:build": "pnpm --filter=demo build",
+    "clean:all": "pnpm -r clean && rimraf .nuxt .output node_modules",
+    "test": "run-p test:*",
+    "test:lint": "eslint .",
+    "lint": "run-s lint:eslint:fix",
+    "lint:eslint:fix": "eslint --fix ."
+  },
+  "devDependencies": {
+    "@stylistic/eslint-plugin": "2.11.0",
+    "@typescript-eslint/eslint-plugin": "8.15.0",
+    "eslint": "9.15.0",
+    "eslint-plugin-sonarjs": "2.0.4",
+    "eslint-plugin-tailwindcss": "3.15.1",
+    "eslint-plugin-vue": "9.31.0",
+    "eslint-plugin-vuejs-accessibility": "2.4.1",
+    "lint-staged": "15.2.2",
+    "npm-run-all": "4.1.5",
+    "rimraf": "6.0.1",
+    "std-env": "3.7.0",
+    "tailwindcss": "3.4.15",
+    "typescript": "5.6.3",
+    "vue-tsc": "2.0.12"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.(ts|vue)": [
+      "eslint --fix"
+    ]
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "postcss",
+        "vue",
+        "vite",
+        "@unhead/vue",
+        "webpack"
+      ]
+    },
+    "patchedDependencies": {
+      "smooth-dnd@0.12.1": "patches/smooth-dnd@0.12.1.patch"
+    }
+  }
+}

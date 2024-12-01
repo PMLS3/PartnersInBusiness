@@ -1,0 +1,94 @@
+# Development Guidelines
+
+## Expertise Areas
+
+You have extensive expertise in:
+
+- TypeScript
+- Node.js
+- Nuxt3
+- Firebase DataConnect
+- Vue Router (`useRouter`)
+- VueUse
+- Headless UI
+- @shuriken-ui/nuxt
+- Tailwind
+- Langsmith
+- LangChain
+- Nuxt Layers
+- Capacitor
+
+## Documentation Requirements
+
+- Follow the documentation guide at `.ai/documentation.md` for all new and updated code
+- Documentation is mandatory for all components, pages, APIs, and features
+- Keep documentation in sync with code changes
+
+## Code Style and Structure
+
+- Write clean, maintainable, and technically accurate TypeScript code
+- Prioritize functional and declarative programming patterns; avoid using classes
+- Emphasize iteration and modularization to follow DRY principles and minimize code duplication
+- Prefer Composition API `<script setup lang="ts">` style
+- Use Composables to encapsulate and share reusable client-side logic or state across multiple components
+
+## Component and Page Architecture
+
+- Pages should use components as much as possible for reusability
+- Business logic should primarily reside in the page components
+- Data should be passed to child components via props
+- Changes in child components should be emitted back to the page
+- Components should be designed for reusability across different pages
+- Avoid duplicating component logic; extract common patterns into shared components
+
+## Database Implementation
+
+### Firebase DataConnect
+
+- Use DataConnect as the primary database solution
+- Implement proper schema design following DataConnect best practices
+- Utilize GraphQL queries and mutations for data operations
+- Leverage DataConnect's type-safe SDKs for client-side integration
+- Implement proper authentication and security rules
+- Use vector search capabilities where applicable for AI-powered features
+
+## Nuxt 3 Specifics
+
+- Nuxt 3 provides auto imports, so there's no need to manually import 'ref', 'useState', or 'useRouter'
+- For color mode handling, use the built-in '@nuxtjs/color-mode' with the 'useColorMode()' function
+- Take advantage of VueUse functions to enhance reactivity and performance (except for color mode management)
+- Use the Server API (within the server/api directory) for server-side operations
+- Use useRuntimeConfig for environment-specific configuration
+- For SEO use useHead and useSeoMeta
+- For images use <NuxtImage> or <NuxtPicture> component and for Icons use Nuxt Icons module
+- Use app.config.ts for app theme configuration
+
+## Data Fetching
+
+1. Use useFetch for standard data fetching with SSR benefits
+2. Use $fetch for client-side only requests
+3. Use useAsyncData for complex data fetching logic
+4. Set server: false for client-side only fetching
+5. Set lazy: true for non-critical data fetching
+
+## Naming Conventions
+
+- Utilize composables, naming them as use<MyComposable>
+- Use **PascalCase** for component file names (e.g., components/MyComponent.vue)
+- Favor named exports for functions
+- Use descriptive names that indicate functionality
+
+## TypeScript Usage
+
+- Use TypeScript throughout the application
+- Prefer interfaces over types for better extendability
+- Avoid enums, use const maps instead
+- Use functional components with TypeScript interfaces
+- Ensure proper type definitions for all code
+
+## UI and Styling
+
+- Use Nuxt UI and Tailwind CSS for components and styling
+- Implement responsive design with Tailwind CSS
+- Follow mobile-first approach
+- Maintain consistent styling patterns

@@ -1,0 +1,26 @@
+{
+  "editor.formatOnSave": false,
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "[markdown]": {
+    "editor.rulers": [80]
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "markdown",
+    "typescript",
+    "vue"
+  ],
+  "tailwindCSS.experimental.configFile": ".demo/tailwind.config.ts",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "prettier.enable": false,
+  "vue.codeActions.enabled": false,
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#2E068F",
+    "titleBar.activeBackground": "#4008C8",
+    "titleBar.activeForeground": "#FDFCFF"
+  }
+}
