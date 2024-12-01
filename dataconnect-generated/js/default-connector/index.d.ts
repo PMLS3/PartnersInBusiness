@@ -10,6 +10,7 @@ export type Int64String = string;
 export type DateString = string;
 
 
+
 export interface AddAppToUserData {
   user_update?: User_Key | null;
 }
@@ -232,6 +233,17 @@ export interface GetWorkspaceVariables {
   key: Workspace_Key;
 }
 
+export interface ListUsersData {
+  users: ({
+    uid: UUIDString;
+    email: string;
+    username: string;
+    displayName?: string | null;
+    photoURL?: string | null;
+    appIds?: string[] | null;
+  } & User_Key)[];
+}
+
 export interface ProfilePrivacy_Key {
   uid: UUIDString;
   __typename?: 'ProfilePrivacy_Key';
@@ -424,6 +436,14 @@ export function removeUserFromWorkspaceRef(dc: DataConnect, vars: RemoveUserFrom
 
 export function removeUserFromWorkspace(vars: RemoveUserFromWorkspaceVariables): MutationPromise<RemoveUserFromWorkspaceData, RemoveUserFromWorkspaceVariables>;
 export function removeUserFromWorkspace(dc: DataConnect, vars: RemoveUserFromWorkspaceVariables): MutationPromise<RemoveUserFromWorkspaceData,RemoveUserFromWorkspaceVariables>;
+
+
+/* Allow users to create refs without passing in DataConnect */
+export function listUsersRef(): QueryRef<ListUsersData, undefined>;/* Allow users to pass in custom DataConnect instances */
+export function listUsersRef(dc: DataConnect): QueryRef<ListUsersData,undefined>;
+
+export function listUsers(): QueryPromise<ListUsersData, undefined>;
+export function listUsers(dc: DataConnect): QueryPromise<ListUsersData,undefined>;
 
 
 /* Allow users to create refs without passing in DataConnect */

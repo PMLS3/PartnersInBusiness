@@ -82,6 +82,17 @@
 #   }
 # }
 
+query ListUsers @auth(level: PUBLIC) {
+  users {
+    uid
+    email
+    username
+    displayName
+    photoURL
+    appIds
+  }
+}
+
 # User Queries
 query GetUser($key: User_Key!) @auth(level: USER) {
   user(key: $key) {
@@ -292,5 +303,36 @@ query SearchProfiles($query: String!, $appId: String!, $limit: Int = 10) @auth(l
     title
     bio
     avatar
+  }
+}
+
+# Notification Queries
+query GetProfileNotifications($profileId: UUID!, $appId: String!) @auth(level: USER) {
+  notifications(
+    where: { 
+      profileId: { eq: $profileId },
+      appId: { eq: $appId }
+    },
+    orderBy: { createdAt: DESC }
+  ) {
+    uid
+    type
+    title
+    message
+    data
+    read
+    createdAt
+  }
+}
+
+query GetUnreadNotificationCount($profileId: UUID!, $appId: String!) @auth(level: USER) {
+  notifications_aggregate(
+    where: { 
+      profileId: { eq: $profileId },
+      appId: { eq: $appId },
+      read: { eq: false }
+    }
+  ) {
+    count
   }
 }

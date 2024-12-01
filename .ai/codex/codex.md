@@ -403,3 +403,15 @@ L031:
   - Keep field names consistent between variables and arguments
 - Impact: Proper mutation argument structure in DataConnect
 - Related: L030, L029, L028
+
+L032:
+
+- Context: Server API and DataConnect operation alignment
+- Insight: Server APIs require specific DataConnect operations
+- Application: 
+  - Add CreateProfile and UpdateProfile mutations
+  - Add CreateWorkspace and UpdateWorkspace mutations
+  - Add notification queries
+  - Match operation fields with API requirements
+- Impact: Complete coverage of server API requirements
+- Related: L031, L030, L029

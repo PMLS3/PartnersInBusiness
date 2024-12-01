@@ -59,7 +59,6 @@ export { default as componentMeta } from '../utils/component-meta';
 export { makeUUID, slugify } from '../utils/data';
 export { gqlQuery, gqlMutation, createTypedQuery, createTypedMutation } from '../utils/dataconnect';
 export { getFileExtension, isImageFile, isDocumentFile, generateUniqueFilename, fileToBase64, base64ToBlob, getFileIcon, validateFile, createImageThumbnail } from '../utils/file';
-export { useFirebaseServer } from '../utils/firebase-server';
 export { app, auth } from '../utils/firebase';
 export { formatPrice } from '../utils/format-currency';
 export { formatDate, DateFormatsNames } from '../utils/format-dates';
@@ -72,4 +71,4 @@ export { createNinjaToaster } from '../../node_modules/.pnpm/@cssninja+nuxt-toas
 export { useNinjaToaster } from '../../node_modules/.pnpm/@cssninja+nuxt-toaster@0.3.12_magicast@0.3.5_rollup@4.27.3_vue@3.5.12_typescript@5.6.3_/node_modules/@cssninja/nuxt-toaster/dist/runtime/composables/useNinjaToaster';
 export { useImage } from '../../node_modules/.pnpm/@nuxt+image@1.8.1_ioredis@5.4.1_magicast@0.3.5_rollup@4.27.3/node_modules/@nuxt/image/dist/runtime/composables';
 export { useColorMode } from '../../node_modules/.pnpm/@nuxtjs+color-mode@3.4.0_magicast@0.3.5_rollup@4.27.3/node_modules/@nuxtjs/color-mode/dist/runtime/composables';
-export { definePageMeta } from '../../node_modules/.pnpm/nuxt@3.11.2_@parcel+watcher@2.4.1_@types+node@22.10.1_@unocss+reset@0.59.1_change-case@5.4.4__bpikmpbvxtoq35hrf2up5zlzyy/node_modules/nuxt/dist/pages/runtime/composables';
+export { definePageMeta } from '../../node_modules/.pnpm/nuxt@3.11.2_@parcel+watcher@2.4.1_@types+node@22.10.1_@unocss+reset@0.59.1_change-case@5.4.4__twmybpxphuevzb2usqn2olokxu/node_modules/nuxt/dist/pages/runtime/composables';

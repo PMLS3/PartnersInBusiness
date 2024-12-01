@@ -95,3 +95,97 @@ mutation RemoveUserFromWorkspace(
 ) @auth(level: USER) {
   userWorkspace_delete(key: $key)
 }
+
+# Profile Mutations
+mutation CreateProfile(
+  $uid: UUID!,
+  $userId: UUID!,
+  $appId: String!,
+  $displayName: String,
+  $title: String,
+  $bio: String,
+  $avatar: String,
+  $skills: [String!],
+  $social: ProfileSocial,
+  $privacy: ProfilePrivacy
+) @auth(level: USER) {
+  profile_insert(data: {
+    uid: $uid,
+    userId: $userId,
+    appId: $appId,
+    displayName: $displayName,
+    title: $title,
+    bio: $bio,
+    avatar: $avatar,
+    skills: $skills,
+    social: $social,
+    privacy: $privacy
+  })
+}
+
+mutation UpdateProfile(
+  $key: Profile_Key!,
+  $displayName: String,
+  $title: String,
+  $bio: String,
+  $avatar: String,
+  $skills: [String!],
+  $social: ProfileSocial,
+  $privacy: ProfilePrivacy
+) @auth(level: USER) {
+  profile_update(
+    key: $key,
+    data: {
+      displayName: $displayName,
+      title: $title,
+      bio: $bio,
+      avatar: $avatar,
+      skills: $skills,
+      social: $social,
+      privacy: $privacy
+    }
+  )
+}
+
+# Workspace Mutations
+mutation CreateWorkspace(
+  $uid: UUID!,
+  $name: String!,
+  $slug: String!,
+  $appId: String!,
+  $description: String,
+  $ownerId: UUID!,
+  $theme: WorkspaceTheme,
+  $settings: WorkspaceSettings
+) @auth(level: USER) {
+  workspace_insert(data: {
+    uid: $uid,
+    name: $name,
+    slug: $slug,
+    appId: $appId,
+    description: $description,
+    ownerId: $ownerId,
+    theme: $theme,
+    settings: $settings
+  })
+}
+
+mutation UpdateWorkspace(
+  $key: Workspace_Key!,
+  $name: String,
+  $slug: String,
+  $description: String,
+  $theme: WorkspaceTheme,
+  $settings: WorkspaceSettings
+) @auth(level: USER) {
+  workspace_update(
+    key: $key,
+    data: {
+      name: $name,
+      slug: $slug,
+      description: $description,
+      theme: $theme,
+      settings: $settings
+    }
+  )
+}

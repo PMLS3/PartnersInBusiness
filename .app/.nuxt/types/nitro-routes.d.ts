@@ -22,7 +22,7 @@ declare module 'nitropack' {
       'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../../shared/server/api/workspace/join.post').default>>>>
     }
     '/__nuxt_error': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../../node_modules/.pnpm/nuxt@3.11.2_@parcel+watcher@2.4.1_@types+node@22.10.1_@unocss+reset@0.59.1_change-case@5.4.4__bpikmpbvxtoq35hrf2up5zlzyy/node_modules/nuxt/dist/core/runtime/nitro/renderer').default>>>>
+      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../../node_modules/.pnpm/nuxt@3.11.2_@parcel+watcher@2.4.1_@types+node@22.10.1_@unocss+reset@0.59.1_change-case@5.4.4__twmybpxphuevzb2usqn2olokxu/node_modules/nuxt/dist/core/runtime/nitro/renderer').default>>>>
     }
     '/api/_nuxt_icon/:collection': {
       'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../../node_modules/.pnpm/@nuxt+icon@1.8.2_magicast@0.3.5_rollup@4.27.3_vite@5.4.11_@types+node@22.10.1_terser@5.30.3___5lkabvldtddszrgb45aa5xyb7m/node_modules/@nuxt/icon/dist/runtime/server/api').default>>>>

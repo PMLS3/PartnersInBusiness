@@ -1,21 +1,23 @@
 import { useAppConfig } from '#imports'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { useFirebaseServer } from '~/shared/utils/firebase-server'
-import { makeUUID } from '~/shared/utils/data'
-import type { H3Event } from 'h3'
+import { useFirebaseServer } from '../../utils/firebase-server'
+import { createUser, getUserByEmail } from 'one-person-empire'
+import { makeUUID } from '../../../utils/data'
 
-export default defineEventHandler(async (event: H3Event) => {
+export default defineEventHandler(async (event) => {
   try {
-    const config = useAppConfig()
-    const body = await readBody<{
-      email: string
-      password: string
-      username: string
-      displayName?: string
-      token: string
-    }>(event)
+    const body = await readBody(event)
+    const { email, username, displayName, photoURL } = body
+    
+    // Get Firebase token from request
+    const token = getRequestHeader(event, 'authorization')?.split('Bearer ')[1]
+    if (!token) {
+      throw createError({
+        statusCode: 401,
+        message: 'Unauthorized - No token provided'
+      })
+    }
 
-    const { auth, dataConnect } = useFirebaseServer(body.token)
+    const { dataConnect } = useFirebaseServer(token)
     if (!dataConnect) {
       throw createError({
         statusCode: 500,
@@ -23,65 +25,39 @@ export default defineEventHandler(async (event: H3Event) => {
       })
     }
 
-    try {
-      // Create Firebase user
-      const { user: firebaseUser } = await createUserWithEmailAndPassword(
-        auth,
-        body.email,
-        body.password
-      )
-
-      // Create user in DataConnect
-      const userPayload = {
-        uid: makeUUID(),
-        email: body.email,
-        username: body.username,
-        displayName: body.displayName,
-        photoURL: firebaseUser.photoURL,
-        appIds: [config.appId]
-      }
-
-      const result = await dataConnect.mutation('user_insert', {
-        data: userPayload
+    // Check if user exists
+    const existingUser = await getUserByEmail(dataConnect, { email })
+    if (existingUser) {
+      throw createError({
+        statusCode: 400,
+        message: 'User already exists'
       })
-
-      if (result.errors?.length) {
-        throw result.errors
-      }
-
-      return {
-        statusCode: 200,
-        data: result.data.user_insert
-      }
-    } catch (error: any) {
-      // Handle specific Firebase errors
-      if (error.code === 'auth/email-already-in-use') {
-        throw createError({
-          statusCode: 400,
-          message: 'Email already registered',
-          code: 'EMAIL_EXISTS'
-        })
-      }
-      if (error.code === 'auth/invalid-email') {
-        throw createError({
-          statusCode: 400,
-          message: 'Invalid email format',
-          code: 'INVALID_EMAIL'
-        })
-      }
-      if (error.code === 'auth/weak-password') {
-        throw createError({
-          statusCode: 400,
-          message: 'Password is too weak',
-          code: 'WEAK_PASSWORD'
-        })
-      }
-      throw error
     }
-  } catch (error: any) {
-    return createError({
+
+    // Create new user
+    const result = await createUser(dataConnect, {
+      uid: makeUUID(),
+      email,
+      username,
+      displayName,
+      photoURL,
+      appIds: [useAppConfig().appId],
+      searchableText: `${username} ${displayName || ''}`
+    })
+
+    if (result.errors?.length > 0) {
+      throw createError({
+        statusCode: 400,
+        message: 'Failed to create user',
+        data: result.errors
+      })
+    }
+
+    return { success: true, data: result }
+  } catch (error) {
+    throw createError({
       statusCode: error.statusCode || 500,
-      message: error.message || 'An error occurred while registering user'
+      message: error.message || 'Internal server error'
     })
   }
 }) 

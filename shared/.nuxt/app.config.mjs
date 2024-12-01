@@ -4,7 +4,7 @@ import { defuFn } from 'defu'
 
 const inlineConfig = {
   "nuxt": {
-    "buildId": "07fd3ad7-9228-47c7-ad92-0e9a716e8300"
+    "buildId": "a5a31147-fddf-4675-9793-ce473fd85beb"
   },
   "__swiper": {
     "bundled": true
@@ -213,6 +213,6 @@ if (import.meta.hot) {
 }
 
 import cfg0 from "/Users/peetstander/Projects/pibs/shared/app.config.ts"
-import cfg1 from "/Users/peetstander/Projects/pibs/node_modules/.pnpm/@shuriken-ui+nuxt@3.6.1_magicast@0.3.5_nuxt@3.13.2_@parcel+watcher@2.4.1_@types+node@22.10.1__l4i72wdmcwyn6tpf4yswthijfq/node_modules/@shuriken-ui/nuxt/app.config.ts"
+import cfg1 from "/Users/peetstander/Projects/pibs/node_modules/.pnpm/@shuriken-ui+nuxt@3.6.1_magicast@0.3.5_nuxt@3.13.2_@parcel+watcher@2.4.1_@types+node@22.10.1__4b46sbgtuk3j7f4cvciuhqlj24/node_modules/@shuriken-ui/nuxt/app.config.ts"
 
 export default /*@__PURE__*/ defuFn(cfg0, cfg1, inlineConfig)

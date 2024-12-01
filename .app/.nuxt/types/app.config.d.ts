@@ -3,11 +3,11 @@ import type { CustomAppConfig } from 'nuxt/schema'
 import type { Defu } from 'defu'
 import cfg0 from "/Users/peetstander/Projects/pibs/.app/app.config"
 import cfg1 from "/Users/peetstander/Projects/pibs/shared/app.config"
-import cfg2 from "/Users/peetstander/Projects/pibs/node_modules/.pnpm/@shuriken-ui+nuxt@3.6.1_magicast@0.3.5_nuxt@3.13.2_@parcel+watcher@2.4.1_@types+node@22.10.1__l4i72wdmcwyn6tpf4yswthijfq/node_modules/@shuriken-ui/nuxt/app.config"
+import cfg2 from "/Users/peetstander/Projects/pibs/node_modules/.pnpm/@shuriken-ui+nuxt@3.6.1_magicast@0.3.5_nuxt@3.13.2_@parcel+watcher@2.4.1_@types+node@22.10.1__4b46sbgtuk3j7f4cvciuhqlj24/node_modules/@shuriken-ui/nuxt/app.config"
 
 declare const inlineConfig = {
   "nuxt": {
-    "buildId": "2951a84f-ffa7-459a-8633-67cf1bc2e8d6"
+    "buildId": "356e7d97-0d54-4060-94a8-30b82a0cda9c"
   },
   "__swiper": {
     "bundled": true

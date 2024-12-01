@@ -1,5 +1,12 @@
 {
   "projects": {
     "default": "omni-connect-9b23d"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {
+    "postgres": {
+      "localConnectionString": "postgresql://peetstander:mypassword@localhost:5433/emulator?sslmode=disable"
+    }
   }
 }
