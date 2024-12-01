@@ -1,0 +1,224 @@
+openapi: 3.0.0
+info:
+  title: Partners in Business API
+  version: 1.0.0
+  description: API for Partners in Business platform
+
+servers:
+  - url: /api
+    description: API server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        uid:
+          type: string
+        email:
+          type: string
+        username:
+          type: string
+        displayName:
+          type: string
+        photoURL:
+          type: string
+        appIds:
+          type: array
+          items:
+            type: string
+        defaultWorkspace:
+          type: string
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    Workspace:
+      type: object
+      properties:
+        uid:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        appId:
+          type: string
+        description:
+          type: string
+        ownerId:
+          type: string
+        theme:
+          $ref: '#/components/schemas/WorkspaceTheme'
+        settings:
+          $ref: '#/components/schemas/WorkspaceSettings'
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    Profile:
+      type: object
+      properties:
+        uid:
+          type: string
+        userId:
+          type: string
+        appId:
+          type: string
+        displayName:
+          type: string
+        title:
+          type: string
+        bio:
+          type: string
+        avatar:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+        social:
+          $ref: '#/components/schemas/ProfileSocial'
+        privacy:
+          $ref: '#/components/schemas/ProfilePrivacy'
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - username
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+                username:
+                  type: string
+                displayName:
+                  type: string
+      responses:
+        '200':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /workspace/create:
+    post:
+      summary: Create a new workspace
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - userId
+              properties:
+                name:
+                  type: string
+                theme:
+                  $ref: '#/components/schemas/WorkspaceTheme'
+                settings:
+                  $ref: '#/components/schemas/WorkspaceSettings'
+                userId:
+                  type: string
+                profileName:
+                  type: string
+                profileTitle:
+                  type: string
+                profileId:
+                  type: string
+      responses:
+        '200':
+          description: Workspace created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  workspace:
+                    $ref: '#/components/schemas/Workspace'
+                  profile:
+                    $ref: '#/components/schemas/Profile'
+
+  /workspace/join:
+    post:
+      summary: Join a workspace
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userId
+                - workspaceId
+              properties:
+                userId:
+                  type: string
+                workspaceId:
+                  type: string
+                profileId:
+                  type: string
+                createNewProfile:
+                  type: boolean
+                profileData:
+                  type: object
+                  properties:
+                    displayName:
+                      type: string
+                    title:
+                      type: string
+                    bio:
+                      type: string
+                    privacy:
+                      $ref: '#/components/schemas/ProfilePrivacy'
+      responses:
+        '200':
+          description: Successfully joined workspace
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  membership:
+                    $ref: '#/components/schemas/UserWorkspace'
+                  profile:
+                    $ref: '#/components/schemas/Profile' 

@@ -1,0 +1,292 @@
+# # Example queries for a simple movie app.
+
+# # @auth() directives control who can call each operation.
+# # Anyone should be able to list all movies, so the auth level is set to PUBLIC
+# query ListMovies @auth(level: PUBLIC) {
+#   movies {
+#     id
+#     title
+#     imageUrl
+#     genre
+#   }
+# }
+
+# # List all users, only admins should be able to list all users, so we use NO_ACCESS
+# query ListUsers @auth(level: NO_ACCESS) {
+#   users { id, username }
+# }
+
+# # Logged in user can list all their reviews and movie titles associated with the review 
+# # Since the query requires the uid of the current authenticated user, the auth level is set to USER
+# query ListUserReviews @auth(level: USER) {
+#   user(key: {id_expr: "auth.uid"}) {
+#     id
+#     username
+#     # <field>_on_<foreign_key_field> makes it easy to grab info from another table
+#     # Here, we use it to grab all the reviews written by the user.
+#     reviews: reviews_on_user {
+#       id
+#       rating
+#       reviewDate
+#       reviewText
+#       movie {
+#         id
+#         title
+#       }
+#     }
+#   }
+# }
+
+# # Get movie by id
+# query GetMovieById($id: UUID!) @auth(level: PUBLIC) {
+#   movie(id: $id) {
+#     id
+#     title
+#     imageUrl
+#     genre
+#     metadata: movieMetadata_on_movie {
+#       rating
+#       releaseYear
+#       description
+#     }
+#     reviews: reviews_on_movie {
+#       id
+#       reviewText
+#       reviewDate
+#       rating
+#       user {
+#         id
+#         username
+#       }
+#     }
+#   }
+# }
+
+# # Search for movies, actors, and reviews
+# query SearchMovie(
+#   $titleInput: String
+#   $genre: String
+# ) @auth(level: PUBLIC) {
+#   movies(
+#     where: {
+#       _and: [
+#         { genre: { eq: $genre } }
+#         { title: { contains: $titleInput } }
+#       ]
+#     }
+#   ) {
+#     id
+#     title
+#     genre
+#     imageUrl
+#   }
+# }
+
+# User Queries
+query GetUser($uid: UUID!) @auth(level: USER) {
+  user(key: $uid) {
+    uid
+    email
+    username
+    displayName
+    photoURL
+    appIds
+    defaultWorkspace
+    createdAt
+    updatedAt
+  }
+}
+
+query GetUserByEmail($email: String!) @auth(level: USER) {
+  users(where: { email: { eq: $email } }, limit: 1) {
+    uid
+    email
+    username
+    displayName
+    appIds
+  }
+}
+
+query GetUserByUsername($username: String!) @auth(level: USER) {
+  users(where: { username: { eq: $username } }, limit: 1) {
+    uid
+    email
+    username
+    displayName
+    appIds
+  }
+}
+
+# Workspace Queries
+query GetWorkspace($uid: UUID!) @auth(level: USER) {
+  workspace(key: $uid) {
+    uid
+    name
+    slug
+    appId
+    description
+    ownerId
+    theme {
+      primary
+      secondary
+      logo
+      background
+    }
+    settings {
+      isPublic
+      allowInvites
+      allowMultipleProfiles
+      features
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+query GetWorkspaceBySlug($slug: String!) @auth(level: USER) {
+  workspaces(where: { slug: { eq: $slug } }, limit: 1) {
+    uid
+    name
+    slug
+    appId
+    description
+    ownerId
+  }
+}
+
+query GetUserWorkspaces($userId: UUID!, $appId: String!) @auth(level: USER) {
+  user_workspaces(
+    where: { 
+      userId: { eq: $userId }
+      appId: { eq: $appId }
+    }
+  ) {
+    workspace {
+      uid
+      name
+      slug
+      description
+      theme {
+        primary
+        logo
+      }
+    }
+    role
+    profile {
+      uid
+      displayName
+      title
+    }
+    joinedAt
+  }
+}
+
+# Profile Queries
+query GetProfile($uid: UUID!) @auth(level: USER) {
+  profile(key: $uid) {
+    uid
+    userId
+    appId
+    displayName
+    title
+    bio
+    avatar
+    skills
+    social {
+      twitter
+      linkedin
+      github
+      website
+    }
+    privacy {
+      isPublic
+      showEmail
+      showSocial
+      showSkills
+    }
+    createdAt
+    updatedAt
+  }
+}
+
+query GetUserProfiles($userId: UUID!, $appId: String!) @auth(level: USER) {
+  profiles(
+    where: { 
+      userId: { eq: $userId }
+      appId: { eq: $appId }
+    }
+  ) {
+    uid
+    displayName
+    title
+    bio
+    avatar
+    privacy {
+      isPublic
+    }
+  }
+}
+
+# Workspace Member Queries
+query GetWorkspaceMembers($workspaceId: UUID!) @auth(level: USER) {
+  user_workspaces(where: { workspaceId: { eq: $workspaceId } }) {
+    userId
+    role
+    profile {
+      displayName
+      title
+      avatar
+    }
+    user {
+      email
+      username
+    }
+    joinedAt
+  }
+}
+
+# Vector Search Queries
+query SearchUsers($query: String!, $appId: String!, $limit: Int = 10) @auth(level: USER) {
+  users(
+    where: { appIds: { contains: [$appId] } }
+    vector: { field: "searchVector", query: $query, limit: $limit }
+  ) {
+    uid
+    username
+    displayName
+    photoURL
+    _score
+  }
+}
+
+query SearchWorkspaces($query: String!, $appId: String!, $limit: Int = 10) @auth(level: USER) {
+  workspaces(
+    where: { appId: { eq: $appId } }
+    vector: { field: "searchVector", query: $query, limit: $limit }
+  ) {
+    uid
+    name
+    description
+    theme {
+      logo
+    }
+    _score
+  }
+}
+
+query SearchProfiles($query: String!, $appId: String!, $limit: Int = 10) @auth(level: USER) {
+  profiles(
+    where: { 
+      appId: { eq: $appId }
+      privacy: { isPublic: { eq: true } }
+    }
+    vector: { field: "searchVector", query: $query, limit: $limit }
+  ) {
+    uid
+    displayName
+    title
+    bio
+    avatar
+    _score
+  }
+}

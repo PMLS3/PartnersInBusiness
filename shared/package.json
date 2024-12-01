@@ -36,7 +36,7 @@
     "@nuxt/image": "1.8.1",
     "@nuxt/kit": "3.14.159",
     "@nuxtjs/tailwindcss": "6.12.2",
-    "one-person-empire": "file:./dataconnect-generated/js/default-connector",
+    "one-person-empire": "file:../dataconnect-generated/js/default-connector",
     "@popperjs/core": "2.11.8",
     "@shikijs/rehype": "1.23.0",
     "@types/chroma-js": "2.4.4",

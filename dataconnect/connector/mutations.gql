@@ -1,0 +1,80 @@
+# User Mutations
+mutation CreateUser(
+  $email: String!, 
+  $username: String!, 
+  $displayName: String,
+  $photoURL: String,
+  $appIds: [String!],
+  $searchableText: String,
+  $defaultWorkspace: UUID
+) @auth(level: PUBLIC) {
+  user_insert(data: {
+    email: $email
+    username: $username
+    displayName: $displayName
+    photoURL: $photoURL
+    appIds: $appIds
+    searchableText: $searchableText
+    defaultWorkspace: $defaultWorkspace
+  })
+}
+
+mutation UpdateUser(
+  $uid: UUID!, 
+  $input: UpdateUserInput!
+) @auth(level: USER) {
+  user_update(key: $uid, data: $input)
+}
+
+mutation AddAppToUser(
+  $uid: UUID!, 
+  $appId: String!
+) @auth(level: USER) {
+  user_update(key: $uid, data: { appIds: { append: [$appId] } })
+}
+
+# UserWorkspace Mutations
+mutation CreateUserWorkspace(
+  $userId: UUID!
+  $workspaceId: UUID!
+  $appId: String!
+  $role: WorkspaceRole!
+  $profileId: UUID
+) @auth(level: USER) {
+  userWorkspace_insert(data: {
+    userId: $userId
+    workspaceId: $workspaceId
+    appId: $appId
+    role: $role
+    profileId: $profileId
+  })
+}
+
+mutation UpdateUserWorkspaceRole(
+  $userId: UUID!
+  $workspaceId: UUID!
+  $role: WorkspaceRole!
+) @auth(level: USER) {
+  user_workspace_update(
+    key: { userId: $userId, workspaceId: $workspaceId }
+    data: { role: $role }
+  )
+}
+
+mutation UpdateUserWorkspaceProfile(
+  $userId: UUID!
+  $workspaceId: UUID!
+  $profileId: UUID!
+) @auth(level: USER) {
+  user_workspace_update(
+    key: { userId: $userId, workspaceId: $workspaceId }
+    data: { profileId: $profileId }
+  )
+}
+
+mutation RemoveUserFromWorkspace(
+  $userId: UUID!
+  $workspaceId: UUID!
+) @auth(level: USER) {
+  user_workspace_delete(key: { userId: $userId, workspaceId: $workspaceId })
+}

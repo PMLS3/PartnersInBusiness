@@ -1,0 +1,12 @@
+specVersion: "v1beta"
+serviceId: "omni-connect-db"
+location: "us-central1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "omni-connect-db"
+      cloudSql:
+        instanceId: "omni-connect"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]

@@ -1,0 +1,42 @@
+"""
+Profile represents a user's presence within an app/workspace
+"""
+type Profile @table(name: "Profile", singular: "profile", plural: "profiles", key: "uid") {
+  uid: UUID! @col(name: "profile_id") @default(expr: "uuidV4()")
+  userId: UUID! @col(name: "user_id")
+  appId: String!
+  displayName: String!
+  title: String
+  bio: String
+  avatar: String
+  skills: [String!]
+  social: ProfileSocial
+  privacy: ProfilePrivacy
+  workspaces: [UserWorkspace!]! @relation
+  user: User! @relation(fields: ["userId"])
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+  # Vector search fields for profile data
+  searchableText: String
+  searchVector: [Float!]
+}
+
+"""
+Social media links for a profile
+"""
+type ProfileSocial {
+  twitter: String
+  linkedin: String
+  github: String
+  website: String
+}
+
+"""
+Privacy settings for a profile
+"""
+type ProfilePrivacy {
+  isPublic: Boolean! @default(value: true)
+  showEmail: Boolean! @default(value: false)
+  showSocial: Boolean! @default(value: true)
+  showSkills: Boolean! @default(value: true)
+} 

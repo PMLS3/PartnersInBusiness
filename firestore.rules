@@ -1,0 +1,94 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isWorkspaceMember(workspaceId) {
+      return request.auth != null && 
+        exists(/databases/$(database)/documents/workspaces/$(workspaceId)/members/$(request.auth.uid));
+    }
+
+    function isWorkspaceAdmin(workspaceId) {
+      return request.auth != null && 
+        get(/databases/$(database)/documents/workspaces/$(workspaceId)/members/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isUserAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Root level workspaces collection
+    match /workspaces/{workspaceId} {
+      // Allow authenticated users to read and list workspaces they're a member of or own
+      allow list, get: if isUserAuthenticated() && (
+        resource.data.ownerId == request.auth.uid || 
+        exists(/databases/$(database)/documents/workspaces/$(workspaceId)/members/$(request.auth.uid))
+      );
+      
+      // Allow authenticated users to create workspaces
+      allow create: if isUserAuthenticated() && 
+        request.resource.data.ownerId == request.auth.uid;
+      
+      // Allow workspace admins to update/delete
+      allow update, delete: if isWorkspaceAdmin(workspaceId);
+
+      // CRM Collections
+      match /customer/{customerId} {
+        allow read: if isWorkspaceMember(workspaceId);
+        allow create, update: if isWorkspaceMember(workspaceId);
+        allow delete: if isWorkspaceAdmin(workspaceId);
+      }
+
+      match /deals/{dealId} {
+        allow read: if isWorkspaceMember(workspaceId);
+        allow create, update: if isWorkspaceMember(workspaceId);
+        allow delete: if isWorkspaceAdmin(workspaceId);
+      }
+
+      match /quotes/{quoteId} {
+        allow read: if isWorkspaceMember(workspaceId);
+        allow create, update: if isWorkspaceMember(workspaceId);
+        allow delete: if isWorkspaceAdmin(workspaceId);
+      }
+
+      match /invoices/{invoiceId} {
+        allow read: if isWorkspaceMember(workspaceId);
+        allow create, update: if isWorkspaceMember(workspaceId);
+        allow delete: if isWorkspaceAdmin(workspaceId);
+      }
+
+      // User Management Collections
+      match /members/{memberId} {
+        allow list, get: if isUserAuthenticated() && 
+          (memberId == request.auth.uid || isWorkspaceAdmin(workspaceId));
+        allow create: if isUserAuthenticated() && 
+          (resource.data.ownerId == request.auth.uid || 
+           isWorkspaceAdmin(workspaceId));
+        allow update, delete: if isWorkspaceAdmin(workspaceId);
+      }
+
+      match /profiles/{profileId} {
+        allow read: if isWorkspaceMember(workspaceId);
+        allow create: if isUserAuthenticated() && request.auth.uid == request.resource.data.userId;
+        allow update: if isUserAuthenticated() && request.auth.uid == resource.data.userId;
+        allow delete: if isWorkspaceAdmin(workspaceId);
+
+        // Vector search for profiles
+        match /embeddingVec/{vectorId} {
+          allow read: if isWorkspaceMember(workspaceId);
+        }
+      }
+    }
+
+    // Global User Data
+    match /users/{userId} {
+      allow read: if isUserAuthenticated();
+      allow write: if isUserAuthenticated() && request.auth.uid == userId;
+
+      // Vector search for users
+      match /embeddingVec/{vectorId} {
+        allow read: if isUserAuthenticated();
+      }
+    }
+  }
+}

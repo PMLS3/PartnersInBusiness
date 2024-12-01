@@ -1,0 +1,118 @@
+"""
+Theme configuration for a workspace
+"""
+type WorkspaceTheme @table(name: "workspace_themes", key: "uid") {
+  uid: UUID! @col(name: "theme_id") @default(expr: "uuidV4()")
+  primary: String
+  secondary: String
+  logo: String
+  background: String
+}
+
+"""
+Settings configuration for a workspace
+"""
+type WorkspaceSettings @table(name: "workspace_settings", key: "uid") {
+  uid: UUID! @col(name: "settings_id") @default(expr: "uuidV4()")
+  isPublic: Boolean
+  allowInvites: Boolean
+  allowMultipleProfiles: Boolean
+  features: [String]
+}
+
+"""
+Social media links for a profile
+"""
+type ProfileSocial @table(name: "profile_social", key: "uid")   {
+  uid: UUID! @col(name: "social_id") @default(expr: "uuidV4()")
+  twitter: String
+  linkedin: String
+  github: String
+  website: String
+}
+
+"""
+Privacy settings for a profile
+"""
+type ProfilePrivacy @table(name: "profile_privacy", key: "uid") {
+  uid: UUID! @col(name: "privacy_id") @default(expr: "uuidV4()")
+  isPublic: Boolean
+  showEmail: Boolean
+  showSocial: Boolean
+  showSkills: Boolean
+}
+
+"""
+User type represents an authenticated user in the system
+"""
+type User @table(name: "users", key: "uid") {
+  uid: UUID! @col(name: "user_id") @default(expr: "uuidV4()")
+  email: String! @unique
+  username: String! @unique
+  displayName: String
+  photoURL: String
+  appIds: [String] @default(value: [])
+  defaultWorkspace: UUID
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+  # Vector search fields for user data
+  searchableText: String
+  searchVector: [Float!]
+}
+
+"""
+Workspace represents a collaborative space within an app
+"""
+type Workspace @table(name: "workspaces", key: "uid") {
+  uid: UUID! @col(name: "workspace_id") @default(expr: "uuidV4()")
+  name: String!
+  slug: String! @unique
+  appId: String!
+  description: String
+  ownerId: UUID! @col(name: "owner_id")
+  theme: WorkspaceTheme
+  settings: WorkspaceSettings
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+  # Vector search fields for workspace data
+  searchableText: String
+  searchVector: [Float!]
+}
+
+"""
+Profile represents a user's presence within an app/workspace
+"""
+type Profile @table(name: "profiles", key: "uid") {
+  uid: UUID! @col(name: "profile_id") @default(expr: "uuidV4()")
+  userId: UUID! @col(name: "user_id")
+  appId: String!
+  displayName: String!
+  title: String
+  bio: String
+  avatar: String
+  skills: [String!]
+  social: ProfileSocial
+  privacy: ProfilePrivacy
+  user: User!
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+  # Vector search fields for profile data
+  searchableText: String
+  searchVector: [Float!]
+}
+
+"""
+UserWorkspace represents the relationship between a user and a workspace
+"""
+type UserWorkspace @table(name: "user_workspaces", key: ["userId", "workspaceId"]) {
+  userId: UUID! @col(name: "user_id")
+  workspaceId: UUID! @col(name: "workspace_id")
+  appId: String!
+  role: String! @default(value: "MEMBER")
+  profileId: UUID @col(name: "profile_id")
+  user: User!
+  workspace: Workspace!
+  profile: Profile
+  joinedAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+}

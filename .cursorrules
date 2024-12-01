@@ -1,0 +1,159 @@
+# AI Assistant Rules
+
+## Session Management
+1. At the start of every session:
+   - Import and analyze `.ai/codex/codex.md` for context
+   - Execute `.ai/session/start-session.md` protocol
+   - Review latest status update from `.ai/status/`
+
+2. At the end of every session when instructed:
+   - Execute `.ai/session/end-session.md` protocol
+   - Create status update with specified format
+   - Document any new learnings in codex
+
+## Technology Stack
+1. Core Framework:
+   - Nuxt 3 with Auto Import
+   - Tailwind CSS for styling
+   - VueUse for composables
+   - Firebase DataConnect for backend
+
+2. AI Integration Requirements:
+   - All data models must support vector embeddings
+   - Implement vector search capabilities in DataConnect queries
+   - Design components with AI-first approach
+   - Optimize data structures for semantic search
+
+3. Development Practices:
+   - Leverage Nuxt 3 auto-imports
+   - Use Tailwind utility classes for styling
+   - Implement VueUse composables for common functionality
+   - Structure DataConnect queries for AI operations
+
+## Project Structure
+1. Default root directory for all new components:
+   - Components: `shared/components/`
+   - Pages: `shared/pages/`
+   - Composables: `shared/composables/`
+   - Utils: `shared/utils/`
+   - Server: `shared/server/`
+   - Types: `shared/types/`
+   - Api: `shared/server/api/`
+
+2. API Endpoint Structure:
+   - Create corresponding API endpoint for all data operations
+   - Place endpoints in `shared/server/api/`
+   - Follow RESTful naming conventions
+   - Include TypeScript interfaces for request/response
+
+3. Only deviate from shared folder structure if explicitly instructed
+
+## Development Guidelines
+1. Always maintain context from:
+   - Latest status updates
+   - Codex entries
+   - Project structure
+
+2. When creating new files:
+   - Follow existing naming conventions
+   - Place in appropriate shared directory
+   - Document dependencies and requirements
+   - Update status file with changes
+   - Create corresponding API endpoints for data operations
+
+3. When modifying existing files:
+   - Document changes in status update
+   - Update codex if new learnings emerge
+   - Maintain consistent code style
+   - Update related API endpoints if needed
+
+4. AI Integration Guidelines:
+   - Include vector field in relevant data models
+   - Implement semantic search capabilities
+   - Design UI components for AI interactions
+   - Document AI-related features and endpoints
+
+5. API Development Guidelines:
+   - Create endpoints for all data management operations
+   - Implement endpoints for all external service interactions
+   - Design RESTful endpoints for all CRUD operations
+   - Include error handling and validation
+   - Document all endpoints with OpenAPI/Swagger
+   - Ensure proper TypeScript typing for requests/responses
+
+6. Testing and Quality:
+   - Write unit tests for critical functionality
+   - Implement end-to-end tests for key user flows
+   - Add error boundaries for component safety
+   - Include input validation and sanitization
+   - Document test coverage requirements
+
+7. Security Guidelines:
+   - Implement proper authentication flows
+   - Add request validation middleware
+   - Follow OWASP security best practices
+   - Secure API endpoints appropriately
+   - Handle sensitive data with care
+
+## Documentation
+1. Keep status updates current with:
+   - Development steps
+   - Key decisions
+   - Next steps
+   - Progress summary
+
+2. Update codex with:
+   - New learnings (L entries)
+   - Error encounters (E entries)
+   - Important decisions
+
+3. API Documentation:
+   - Maintain OpenAPI/Swagger documentation
+   - Document request/response examples
+   - Include error scenarios and handling
+   - Keep authentication requirements updated
+
+## Project Specific
+1. Firebase Configuration:
+   - Maintain emulator configurations
+   - Document any changes to Firebase services
+   - Keep security rules updated
+   - Track deployment requirements
+
+2. Code Organization:
+   - TypeScript for main functions codebase
+   - JavaScript for partnersinbiz codebase
+   - Document API endpoints and mutations
+
+3. DataConnect Integration:
+   - Implement vector search capabilities
+   - Design schemas with AI-first approach
+   - Optimize queries for semantic search
+   - Document vector embedding strategies
+
+4. API Integration:
+   - Create endpoints for all DataConnect operations
+   - Implement endpoints for AI/ML functionality
+   - Design endpoints for vector search operations
+   - Ensure proper error handling and validation
+   - Document all endpoints in API documentation
+
+## Environment Setup
+1. Development Environment:
+   - Configure Firebase emulators
+   - Set up TypeScript compiler options
+   - Configure ESLint and Prettier
+   - Set up test environment
+   - Configure build tools and scripts
+
+2. Deployment Pipeline:
+   - Define staging and production environments
+   - Set up CI/CD workflows
+   - Configure environment variables
+   - Implement deployment safety checks
+
+3. Monitoring and Logging:
+   - Set up error tracking
+   - Implement performance monitoring
+   - Configure logging systems
+   - Set up alerts and notifications

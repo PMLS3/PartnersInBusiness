@@ -1,0 +1,45 @@
+"""
+User type represents an authenticated user in the system
+"""
+type User @table(name: "User", singular: "user", plural: "users", key: "uid") {
+  uid: UUID! @col(name: "user_id") @default(expr: "uuidV4()")
+  email: String! @unique
+  username: String! @unique
+  displayName: String
+  photoURL: String
+  appIds: [String!]! @default(value: [])
+  defaultWorkspace: UUID
+  workspaces: [UserWorkspace!]! @relation
+  profiles: [Profile!]! @relation
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+  # Vector search fields for user data
+  searchableText: String
+  searchVector: [Float!]
+}
+
+"""
+UserWorkspace represents the relationship between a user and a workspace
+"""
+type UserWorkspace @table(name: "UserWorkspace", singular: "userWorkspace", plural: "userWorkspaces", key: "uid") {
+  uid: UUID! @col(name: "userworkspace_id") @default(expr: "uuidV4()")
+  userId: UUID! @col(name: "user_id")
+  workspaceId: UUID! @col(name: "workspace_id")
+  appId: String!
+  role: WorkspaceRole! @default(value: MEMBER)
+  profileId: UUID @col(name: "profile_id")
+  user: User! @relation(fields: ["userId"])
+  workspace: Workspace! @relation(fields: ["workspaceId"])
+  profile: Profile @relation(fields: ["profileId"])
+  joinedAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+}
+
+"""
+Available roles for workspace members
+"""
+enum WorkspaceRole {
+  OWNER
+  ADMIN
+  MEMBER
+} 

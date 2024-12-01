@@ -1,0 +1,39 @@
+"""
+Workspace represents a collaborative space within an app
+"""
+type Workspace @table(name: "Workspace", singular: "workspace", plural: "workspaces", key: "uid") {
+  uid: UUID! @col(name: "workspace_id") @default(expr: "uuidV4()")
+  name: String!
+  slug: String! @unique
+  appId: String!
+  description: String
+  ownerId: UUID! @col(name: "owner_id")
+  members: [UserWorkspace!]! @relation
+  theme: WorkspaceTheme
+  settings: WorkspaceSettings
+  createdAt: Timestamp! @default(expr: "request.time")
+  updatedAt: Timestamp! @default(expr: "request.time")
+  # Vector search fields for workspace data
+  searchableText: String
+  searchVector: [Float!]
+}
+
+"""
+Theme configuration for a workspace
+"""
+type WorkspaceTheme {
+  primary: String! @default(value: "#000000")
+  secondary: String
+  logo: String
+  background: String
+}
+
+"""
+Settings configuration for a workspace
+"""
+type WorkspaceSettings {
+  isPublic: Boolean! @default(value: false)
+  allowInvites: Boolean! @default(value: true)
+  allowMultipleProfiles: Boolean! @default(value: true)
+  features: [String!]! @default(value: [])
+} 
