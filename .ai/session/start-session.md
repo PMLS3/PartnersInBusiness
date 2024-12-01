@@ -1,6 +1,6 @@
 # Start Session Instructions
 
-1. Locate and analyze the most recent status update file in the `.ai/status/` directory (format: `YYYY-MM-DD.md`).
+1. Locate and analyze the most recent status update file in the `.ai/status/$(date +%Y-%m-%d).md`
 
 2. Understand the current project state, recent decisions, and prepare to assist with outlined next steps.
 

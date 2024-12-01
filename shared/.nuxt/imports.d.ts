@@ -56,7 +56,11 @@ export { toString, perSession, asMinutes, asDollar, asKDollar, asPercent, toDate
 export { resolveComponentOrNative } from '../utils/app-config';
 export { getRandomColor } from '../utils/colors';
 export { default as componentMeta } from '../utils/component-meta';
+export { makeUUID, slugify } from '../utils/data';
+export { gqlQuery, gqlMutation, createTypedQuery, createTypedMutation } from '../utils/dataconnect';
 export { getFileExtension, isImageFile, isDocumentFile, generateUniqueFilename, fileToBase64, base64ToBlob, getFileIcon, validateFile, createImageThumbnail } from '../utils/file';
+export { useFirebaseServer } from '../utils/firebase-server';
+export { app, auth } from '../utils/firebase';
 export { formatPrice } from '../utils/format-currency';
 export { formatDate, DateFormatsNames } from '../utils/format-dates';
 export { formatFileSize } from '../utils/format-files';

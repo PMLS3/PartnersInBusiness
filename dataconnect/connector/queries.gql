@@ -83,8 +83,8 @@
 # }
 
 # User Queries
-query GetUser($uid: UUID!) @auth(level: USER) {
-  user(key: $uid) {
+query GetUser($key: User_Key!) @auth(level: USER) {
+  user(key: $key) {
     uid
     email
     username
@@ -118,8 +118,8 @@ query GetUserByUsername($username: String!) @auth(level: USER) {
 }
 
 # Workspace Queries
-query GetWorkspace($uid: UUID!) @auth(level: USER) {
-  workspace(key: $uid) {
+query GetWorkspace($key: Workspace_Key!) @auth(level: USER) {
+  workspace(key: $key) {
     uid
     name
     slug
@@ -155,9 +155,9 @@ query GetWorkspaceBySlug($slug: String!) @auth(level: USER) {
 }
 
 query GetUserWorkspaces($userId: UUID!, $appId: String!) @auth(level: USER) {
-  user_workspaces(
+  userWorkspaces(
     where: { 
-      userId: { eq: $userId }
+      userId: { eq: $userId },
       appId: { eq: $appId }
     }
   ) {
@@ -182,8 +182,8 @@ query GetUserWorkspaces($userId: UUID!, $appId: String!) @auth(level: USER) {
 }
 
 # Profile Queries
-query GetProfile($uid: UUID!) @auth(level: USER) {
-  profile(key: $uid) {
+query GetProfile($key: Profile_Key!) @auth(level: USER) {
+  profile(key: $key) {
     uid
     userId
     appId
@@ -212,7 +212,7 @@ query GetProfile($uid: UUID!) @auth(level: USER) {
 query GetUserProfiles($userId: UUID!, $appId: String!) @auth(level: USER) {
   profiles(
     where: { 
-      userId: { eq: $userId }
+      userId: { eq: $userId },
       appId: { eq: $appId }
     }
   ) {
@@ -229,7 +229,7 @@ query GetUserProfiles($userId: UUID!, $appId: String!) @auth(level: USER) {
 
 # Workspace Member Queries
 query GetWorkspaceMembers($workspaceId: UUID!) @auth(level: USER) {
-  user_workspaces(where: { workspaceId: { eq: $workspaceId } }) {
+  userWorkspaces(where: { workspaceId: { eq: $workspaceId } }) {
     userId
     role
     profile {
@@ -245,24 +245,29 @@ query GetWorkspaceMembers($workspaceId: UUID!) @auth(level: USER) {
   }
 }
 
-# Vector Search Queries
+# Search Queries
 query SearchUsers($query: String!, $appId: String!, $limit: Int = 10) @auth(level: USER) {
   users(
-    where: { appIds: { contains: [$appId] } }
-    vector: { field: "searchVector", query: $query, limit: $limit }
+    where: { 
+      appIds: { includes: $appId },
+      searchableText: { eq: $query }
+    },
+    limit: $limit
   ) {
     uid
     username
     displayName
     photoURL
-    _score
   }
 }
 
 query SearchWorkspaces($query: String!, $appId: String!, $limit: Int = 10) @auth(level: USER) {
   workspaces(
-    where: { appId: { eq: $appId } }
-    vector: { field: "searchVector", query: $query, limit: $limit }
+    where: { 
+      appId: { eq: $appId },
+      searchableText: { eq: $query }
+    },
+    limit: $limit
   ) {
     uid
     name
@@ -270,23 +275,22 @@ query SearchWorkspaces($query: String!, $appId: String!, $limit: Int = 10) @auth
     theme {
       logo
     }
-    _score
   }
 }
 
 query SearchProfiles($query: String!, $appId: String!, $limit: Int = 10) @auth(level: USER) {
   profiles(
     where: { 
-      appId: { eq: $appId }
-      privacy: { isPublic: { eq: true } }
-    }
-    vector: { field: "searchVector", query: $query, limit: $limit }
+      appId: { eq: $appId },
+      privacy: { isPublic: { eq: true } },
+      searchableText: { eq: $query }
+    },
+    limit: $limit
   ) {
     uid
     displayName
     title
     bio
     avatar
-    _score
   }
 }

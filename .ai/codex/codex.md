@@ -167,3 +167,239 @@ L002 DataConnect Schema Table Requirements
 - Application: Added @table to WorkspaceTheme, WorkspaceSettings, ProfileSocial, ProfilePrivacy
 - Impact: Proper type relationships and database structure
 - Related: L001
+
+L012:
+
+- Context: DataConnect mutations
+- Insight: Mutations return key fields only and require specific input types
+- Application: 
+  - Use proper key types (e.g., User_Key instead of UUID)
+  - Select only key fields in mutation responses
+  - Use proper data input types (e.g., User_Data)
+- Impact: Proper type safety and DataConnect compatibility
+- Related: E005
+
+L013:
+
+- Context: DataConnect KeyOutput types
+- Insight: KeyOutput types in DataConnect mutations cannot have field selections
+- Application: 
+  - Remove field selections from mutation responses
+  - Use the raw KeyOutput return value
+  - Query full objects separately if needed
+- Impact: Proper mutation handling in DataConnect
+- Related: L012
+
+L014:
+
+- Context: DataConnect query parameters
+- Insight: Key fields require specific Key types instead of UUID
+- Application: 
+  - Use *_Key types for key parameters (e.g., User_Key)
+  - Use proper field names from schema
+  - Use standard text search instead of vector search if not supported
+- Impact: Proper type safety and schema compliance in queries
+- Related: L013, L012
+
+L015:
+
+- Context: DataConnect array and text operations
+- Insight: DataConnect has specific operators for array and text operations
+- Application: 
+  - Use push for array updates
+  - Use has for array contains checks
+  - Use ilike for text search
+  - Remove vector search if not supported
+- Impact: Proper array and text handling in DataConnect
+- Related: L014, L013
+
+L016:
+
+- Context: DataConnect mutation and query field selections
+- Insight: DataConnect operations require careful handling of return types and field selections
+- Application: 
+  - Mutations return only KeyOutput types with no field selections
+  - Queries can select fields from the full type
+  - Use proper field names from schema (e.g., userWorkspaces not user_workspaces)
+  - Remove vector search fields until supported
+- Impact: Proper type handling and schema compliance
+- Related: L015, L014, L013
+
+L017:
+
+- Context: DataConnect array operations
+- Insight: DataConnect uses append for array updates, not push
+- Application: 
+  - Use append: [value] for adding to arrays
+  - Use remove: [value] for removing from arrays
+  - Use set: [value] for replacing arrays
+- Impact: Proper array manipulation in DataConnect
+- Related: L016, L015
+
+L018:
+
+- Context: DataConnect filter operations
+- Insight: DataConnect has specific filter operators for different types
+- Application: 
+  - Use contains for array membership and text search
+  - Use eq for exact matches
+  - Use set for array updates
+  - Remove ilike and has operators (not supported)
+- Impact: Proper filtering and searching in DataConnect
+- Related: L017, L016, L015
+
+L019:
+
+- Context: DataConnect array and text search operators
+- Insight: DataConnect uses specific operators for array and text operations
+- Application: 
+  - Use add for adding to arrays (not union/append/set)
+  - Use in for array membership checks (not overlap/contains/has)
+  - Use matches for text search (not like/contains/ilike)
+  - Use eq for exact matches
+- Impact: Proper array and text operations in DataConnect
+- Related: L018, L017, L016
+
+L020:
+
+- Context: DataConnect array and text search operators (correction)
+- Insight: DataConnect uses different operators than previously documented
+- Application: 
+  - Use add for adding to arrays (not union/append/set)
+  - Use in for array membership checks (not overlap/contains/has)
+  - Use matches for text search (not like/contains/ilike)
+  - Use eq for exact matches (unchanged)
+- Impact: Correct array and text operations in DataConnect
+- Related: L019, L018, L017
+
+L021:
+
+- Context: DataConnect standard PostgreSQL operators
+- Insight: DataConnect uses standard PostgreSQL operators for filtering and updates
+- Application: 
+  - Use append for array updates
+  - Use contains for array membership checks
+  - Use ilike for case-insensitive text search
+  - Use eq for exact matches
+- Impact: Proper PostgreSQL-compatible operations in DataConnect
+- Related: L020, L019, L018
+
+L022:
+
+- Context: DataConnect operator prefixes
+- Insight: DataConnect operators require underscore prefix
+- Application: 
+  - Use _append for array updates
+  - Use _contains for array membership checks
+  - Use _ilike for case-insensitive text search
+  - Use eq for exact matches (no prefix needed)
+- Impact: Proper operator syntax in DataConnect
+- Related: L021, L020, L019
+
+L023:
+
+- Context: DataConnect array and text search operators (final correction)
+- Insight: DataConnect uses standard PostgreSQL-style operators
+- Application: 
+  - Use push for array updates
+  - Use has for array membership checks
+  - Use like for text search
+  - Use eq for exact matches
+- Impact: Correct operator usage in DataConnect
+- Related: L022, L021, L020
+
+L024:
+
+- Context: DataConnect basic operations
+- Insight: DataConnect may only support basic equality operations
+- Application: 
+  - Use direct assignment for array updates
+  - Use eq for all comparisons
+  - Avoid complex operators until confirmed in schema
+  - May need to implement advanced filtering in application code
+- Impact: Limited but reliable DataConnect operations
+- Related: L023, L022, L021
+
+L025:
+
+- Context: DataConnect variable handling
+- Insight: DataConnect requires individual field variables instead of composite types
+- Application: 
+  - Break down *_Data types into individual field variables
+  - Use separate variables for each field in mutations
+  - Structure data object in the mutation itself
+  - Make optional fields nullable in variable definitions
+- Impact: Proper variable handling in DataConnect mutations
+- Related: L024, L023, L022
+
+L026:
+
+- Context: DataConnect mutation syntax
+- Insight: DataConnect mutations require direct field assignment without data wrapper
+- Application: 
+  - Pass fields directly to mutation operations
+  - Remove data: {} wrapper from mutations
+  - Use same variable names as field names
+  - Keep variables and fields aligned
+- Impact: Proper mutation syntax in DataConnect
+- Related: L025, L024, L023
+
+L027:
+
+- Context: DataConnect schema alignment
+- Insight: Mutations must match exact schema definitions
+- Application: 
+  - Always use data argument for insert/update operations
+  - Use String for enum types (e.g., WorkspaceRole)
+  - Match field types exactly as defined in schema
+  - Keep composite keys as defined in schema
+- Impact: Proper schema compliance in DataConnect operations
+- Related: L026, L025, L024
+
+L028:
+
+- Context: DataConnect mutation argument structure
+- Insight: DataConnect requires data to be passed as a single input object
+- Application: 
+  - Use *_Data input types for data argument
+  - Pass data as a single variable instead of individual fields
+  - Structure input types on client side
+  - Keep mutation definitions simple and consistent
+- Impact: Proper mutation argument handling in DataConnect
+- Related: L027, L026, L025
+
+L029:
+
+- Context: DataConnect relation fields
+- Insight: Relation fields (@relation) cannot be set directly in mutation data
+- Application: 
+  - Remove relation fields from mutation input data
+  - Manage relations through separate operations
+  - Only include directly settable fields in *_Data types
+  - Use separate mutations for managing relationships
+- Impact: Proper handling of relations in DataConnect
+- Related: L028, L027, L026
+
+L030:
+
+- Context: DataConnect mutation variables
+- Insight: DataConnect requires individual field variables instead of composite Data types
+- Application: 
+  - Break down *_Data type variables into individual fields
+  - Use separate variables for each field in mutation input
+  - Structure data object inside the mutation
+  - Make optional fields nullable in variable definitions
+- Impact: Proper variable handling in DataConnect mutations
+- Related: L029, L028, L027
+
+L031:
+
+- Context: DataConnect mutation argument structure (correction)
+- Insight: DataConnect mutations require direct field arguments, not data objects
+- Application: 
+  - Pass fields directly as mutation arguments
+  - Remove data wrapper completely
+  - Remove nested data objects
+  - Keep field names consistent between variables and arguments
+- Impact: Proper mutation argument structure in DataConnect
+- Related: L030, L029, L028

@@ -3,86 +3,11 @@ import type { Serialize, Simplify } from 'nitropack'
 declare module 'nitropack' {
   type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T
   interface InternalApi {
-    '/api/accounts': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/accounts/index').default>>>>
+    '/api/auth/register': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/auth/register.post').default>>>>
     }
-    '/api/accounts/linked': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/accounts/linked').default>>>>
-    }
-    '/api/accounts/rules': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/accounts/rules').default>>>>
-    }
-    '/api/cards': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/cards').default>>>>
-    }
-    '/api/company/billing': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/company/billing/index').default>>>>
-    }
-    '/api/company/candidates': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/company/candidates/index').default>>>>
-    }
-    '/api/company/documents': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/company/documents/index').default>>>>
-    }
-    '/api/company/invoice': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/company/invoice/index').default>>>>
-    }
-    '/api/company/members': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/company/members/index').default>>>>
-    }
-    '/api/company/projects': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/company/projects/index').default>>>>
-    }
-    '/api/company/promotion': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/company/promotion/index').default>>>>
-    }
-    '/api/company/status': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/company/status/index').default>>>>
-    }
-    '/api/company/tasks': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/company/tasks/index').default>>>>
-    }
-    '/api/company/team': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/company/team/index').default>>>>
-    }
-    '/api/contacts': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/contacts').default>>>>
-    }
-    '/api/courses': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/courses').default>>>>
-    }
-    '/api/freelancers': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/freelancers').default>>>>
-    }
-    '/api/hello': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/hello').default>>>>
-    }
-    '/api/invest': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/invest').default>>>>
-    }
-    '/api/jobs': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/jobs').default>>>>
-    }
-    '/api/members': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/members').default>>>>
-    }
-    '/api/offers': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/offers').default>>>>
-    }
-    '/api/payments/incoming': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/payments/incoming').default>>>>
-    }
-    '/api/payments/outgoing': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/payments/outgoing').default>>>>
-    }
-    '/api/payments/recipients': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/payments/recipients').default>>>>
-    }
-    '/api/posts': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/posts').default>>>>
-    }
-    '/api/products': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/products').default>>>>
+    '/api/profile/create': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/profile/create.post').default>>>>
     }
     '/api/profile': {
       'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/profile/index').default>>>>
@@ -90,32 +15,11 @@ declare module 'nitropack' {
     '/api/profile/notifications': {
       'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/profile/notifications/index').default>>>>
     }
-    '/api/projects/details': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/projects/details/index').default>>>>
+    '/api/workspace/create': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/workspace/create.post').default>>>>
     }
-    '/api/projects': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/projects/index').default>>>>
-    }
-    '/api/projects/invite': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/projects/invite/index').default>>>>
-    }
-    '/api/projects/tasks': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/projects/tasks/index').default>>>>
-    }
-    '/api/recipes': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/recipes').default>>>>
-    }
-    '/api/rentals': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/rentals').default>>>>
-    }
-    '/api/search': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/search').default>>>>
-    }
-    '/api/transactions': {
-      'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/transactions').default>>>>
-    }
-    '/api/upload': {
-      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/upload.post').default>>>>
+    '/api/workspace/join': {
+      'post': Simplify<Serialize<Awaited<ReturnType<typeof import('../../server/api/workspace/join.post').default>>>>
     }
     '/__nuxt_error': {
       'default': Simplify<Serialize<Awaited<ReturnType<typeof import('../../../node_modules/.pnpm/nuxt@3.11.2_@parcel+watcher@2.4.1_@types+node@22.10.1_@unocss+reset@0.59.1_change-case@5.4.4__bpikmpbvxtoq35hrf2up5zlzyy/node_modules/nuxt/dist/core/runtime/nitro/renderer').default>>>>

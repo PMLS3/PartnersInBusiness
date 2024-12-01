@@ -1,44 +1,64 @@
 # User Mutations
 mutation CreateUser(
-  $email: String!, 
-  $username: String!, 
-  $displayName: String,
-  $photoURL: String,
-  $appIds: [String!],
-  $searchableText: String,
+  $uid: UUID!
+  $email: String!
+  $username: String!
+  $displayName: String
+  $photoURL: String
   $defaultWorkspace: UUID
+  $appIds: [String!]!
 ) @auth(level: PUBLIC) {
   user_insert(data: {
+    uid: $uid
     email: $email
     username: $username
     displayName: $displayName
     photoURL: $photoURL
-    appIds: $appIds
-    searchableText: $searchableText
     defaultWorkspace: $defaultWorkspace
+    appIds: $appIds
   })
 }
 
 mutation UpdateUser(
-  $uid: UUID!, 
-  $input: UpdateUserInput!
+  $key: User_Key!,
+  $email: String,
+  $username: String,
+  $displayName: String,
+  $photoURL: String,
+  $defaultWorkspace: UUID,
+  $appIds: [String!]
 ) @auth(level: USER) {
-  user_update(key: $uid, data: $input)
+  user_update(
+    key: $key,
+    data: {
+      email: $email
+      username: $username
+      displayName: $displayName
+      photoURL: $photoURL
+      defaultWorkspace: $defaultWorkspace
+      appIds: $appIds
+    }
+  )
 }
 
 mutation AddAppToUser(
-  $uid: UUID!, 
-  $appId: String!
+  $key: User_Key!, 
+  $appIds: [String!]!
 ) @auth(level: USER) {
-  user_update(key: $uid, data: { appIds: { append: [$appId] } })
+  user_update(
+    key: $key,
+    data: { 
+      appIds: $appIds
+    }
+  )
 }
 
 # UserWorkspace Mutations
 mutation CreateUserWorkspace(
-  $userId: UUID!
-  $workspaceId: UUID!
-  $appId: String!
-  $role: WorkspaceRole!
+  $userId: UUID!,
+  $workspaceId: UUID!,
+  $appId: String!,
+  $role: String!,
   $profileId: UUID
 ) @auth(level: USER) {
   userWorkspace_insert(data: {
@@ -51,30 +71,27 @@ mutation CreateUserWorkspace(
 }
 
 mutation UpdateUserWorkspaceRole(
-  $userId: UUID!
-  $workspaceId: UUID!
-  $role: WorkspaceRole!
+  $key: UserWorkspace_Key!,
+  $role: String!
 ) @auth(level: USER) {
-  user_workspace_update(
-    key: { userId: $userId, workspaceId: $workspaceId }
+  userWorkspace_update(
+    key: $key,
     data: { role: $role }
   )
 }
 
 mutation UpdateUserWorkspaceProfile(
-  $userId: UUID!
-  $workspaceId: UUID!
+  $key: UserWorkspace_Key!,
   $profileId: UUID!
 ) @auth(level: USER) {
-  user_workspace_update(
-    key: { userId: $userId, workspaceId: $workspaceId }
+  userWorkspace_update(
+    key: $key,
     data: { profileId: $profileId }
   )
 }
 
 mutation RemoveUserFromWorkspace(
-  $userId: UUID!
-  $workspaceId: UUID!
+  $key: UserWorkspace_Key!
 ) @auth(level: USER) {
-  user_workspace_delete(key: { userId: $userId, workspaceId: $workspaceId })
+  userWorkspace_delete(key: $key)
 }

@@ -52,154 +52,253 @@ The system is designed to work across multiple applications, with each app havin
    - Username
 3. System:
    - Creates Firebase authentication record
-   - Creates user profile in DataConnect
+   - Creates user profile in DataConnect using `CreateUser` mutation
    - Adds current `appId` to user's `appIds` array
    - Redirects to workspace creation wizard
 
-## Workspace Creation
+## Data Types
 
-### Workspace Types
+### User Type
+
+```typescript
+interface User {
+  uid: UUID
+  email: string
+  username: string
+  displayName?: string
+  photoURL?: string
+  appIds: string[]
+  defaultWorkspace?: UUID
+  createdAt: Date
+  updatedAt: Date
+  // Relations (not directly settable)
+  workspaces: UserWorkspace[]
+  profiles: Profile[]
+}
+```
+
+### Workspace Type
 
 ```typescript
 interface Workspace {
-  uid: string
+  uid: UUID
   name: string
   slug: string
-  appId: string  // Specific to the app where workspace was created
-  owner: string
-  members: WorkspaceMember[]
-  theme: WorkspaceTheme
-  settings: WorkspaceSettings
+  appId: string
+  description?: string
+  ownerId: UUID
+  theme: {
+    primary?: string
+    secondary?: string
+    logo?: string
+    background?: string
+  }
+  settings: {
+    isPublic: boolean
+    allowInvites: boolean
+    allowMultipleProfiles: boolean
+    features: string[]
+  }
   createdAt: Date
   updatedAt: Date
 }
+```
 
-interface WorkspaceMember {
-  uid: string
-  role: 'owner' | 'admin' | 'member'
-  profile: Profile
+### UserWorkspace Type
+
+```typescript
+interface UserWorkspace {
+  userId: UUID
+  workspaceId: UUID
+  appId: string
+  role: string
+  profileId?: UUID
   joinedAt: Date
 }
 ```
 
-### Workspace Creation Flow
-
-1. User initiates workspace creation
-2. System:
-   - Creates workspace with current `appId`
-   - Checks if user has any existing profiles
-   - If no profiles:
-     - Automatically creates first profile
-     - Associates profile with workspace
-   - If has profiles:
-     - Prompts to create new profile or use existing
-     - Associates chosen/created profile with workspace
-
-## Profile Management
-
-### Profile Types
+### Profile Type
 
 ```typescript
 interface Profile {
-  uid: string
-  userId: string
-  appId: string  // Specific to the app where profile was created
+  uid: UUID
+  userId: UUID
+  appId: string
   displayName: string
   title?: string
   bio?: string
   avatar?: string
   skills?: string[]
-  social?: {
+  social: {
     twitter?: string
     linkedin?: string
     github?: string
+    website?: string
+  }
+  privacy: {
+    isPublic: boolean
+    showEmail: boolean
+    showSocial: boolean
+    showSkills: boolean
   }
   createdAt: Date
   updatedAt: Date
 }
 ```
 
-### Profile Features
+## DataConnect Operations
 
-1. **Multiple Profiles**
-   - Users can have different profiles per app/workspace
-   - First profile is auto-created with first workspace
-   - Subsequent workspaces:
-     - Option to create new profile
-     - Option to use existing profile from same app
-
-2. **Profile Privacy**
-   - Control what information is visible to other workspace members
-   - Separate public and private information
-
-## Implementation Details
-
-### Auth Composable
+### User Operations
 
 ```typescript
-export function useAuth() {
-  const user = useState<User | null>('user', () => null)
-  const appId = useAppConfig().appId
+import { useFirebaseServer } from "@/utils/firebase-server"
+import { addUser, updateUser, getUser, getUserByEmail } from "one-person-empire"
+import { makeUUID } from "@/utils/data"
+
+// Mutations
+const createUser = async (token: string, data: {
+  email: string
+  username: string
+  displayName?: string
+  photoURL?: string
+  defaultWorkspace?: UUID
+  appIds: string[]
+}) => {
+  const { dataConnect } = useFirebaseServer(token)
   
-  async function register(email: string, password: string, username: string) {
-    // Create Firebase auth record
-    const { user: firebaseUser } = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    )
-    
-    // Create user in DataConnect with appId
-    const userData = await createUserData(firebaseUser.uid, {
-      email,
-      username,
-      appIds: [appId]
+  if (!dataConnect) {
+    throw createError({
+      statusCode: 500,
+      message: "Failed to initialize Firebase connection",
     })
-    
-    return userData
   }
 
-  // ... other auth methods
+  const payload = {
+    uid: makeUUID(),
+    ...data
+  }
+
+  const result = await addUser(dataConnect, payload)
+  
+  if (result.errors?.length > 0) {
+    throw createError({
+      statusCode: 400,
+      message: "Failed to create user",
+      data: result.errors,
+    })
+  }
+
+  return payload
+}
+
+const updateUserData = async (token: string, uid: string, data: Partial<User>) => {
+  const { dataConnect } = useFirebaseServer(token)
+  return await updateUser(dataConnect, { uid, ...data })
+}
+
+// Queries
+const getUserData = async (token: string, uid: string) => {
+  const { dataConnect } = useFirebaseServer(token)
+  return await getUser(dataConnect, { uid })
+}
+
+const findUserByEmail = async (token: string, email: string) => {
+  const { dataConnect } = useFirebaseServer(token)
+  return await getUserByEmail(dataConnect, { email })
 }
 ```
 
-### Workspace Composable
+### Workspace Operations
 
 ```typescript
-export function useWorkspace() {
-  const appId = useAppConfig().appId
+import { 
+  addUserWorkspace, 
+  updateUserWorkspaceRole,
+  getWorkspace,
+  getUserWorkspaces 
+} from "one-person-empire"
+
+// Mutations
+const createWorkspace = async (token: string, data: {
+  userId: UUID
+  workspaceId: UUID
+  appId: string
+  role: string
+  profileId?: UUID
+}) => {
+  const { dataConnect } = useFirebaseServer(token)
   
-  async function createWorkspace(data: WorkspaceCreationData) {
-    // Create workspace with appId
-    const workspace = await createWorkspaceData({
-      ...data,
-      appId
-    })
-    
-    // Handle profile creation/selection
-    const profile = await handleProfileForWorkspace(workspace.uid)
-    
-    return { workspace, profile }
+  const payload = {
+    uid: makeUUID(),
+    ...data
   }
 
-  async function handleProfileForWorkspace(workspaceId: string) {
-    const existingProfiles = await getUserProfiles(appId)
-    
-    if (!existingProfiles.length) {
-      // Auto-create first profile
-      return await createProfile({
-        workspaceId,
-        appId
-      })
-    }
-    
-    // Return UI for profile selection/creation
-    return {
-      existingProfiles,
-      createNewProfile: () => createProfile({ workspaceId, appId })
-    }
+  const result = await addUserWorkspace(dataConnect, payload)
+  
+  if (result.errors?.length > 0) {
+    throw createError({
+      statusCode: 400,
+      message: "Failed to create workspace",
+      data: result.errors,
+    })
   }
+
+  return payload
+}
+
+const updateWorkspaceRole = async (token: string, key: UserWorkspace_Key, role: string) => {
+  const { dataConnect } = useFirebaseServer(token)
+  return await updateUserWorkspaceRole(dataConnect, { key, role })
+}
+
+// Queries
+const getWorkspaceData = async (token: string, uid: string) => {
+  const { dataConnect } = useFirebaseServer(token)
+  return await getWorkspace(dataConnect, { uid })
+}
+
+const listUserWorkspaces = async (token: string, userId: UUID, appId: string) => {
+  const { dataConnect } = useFirebaseServer(token)
+  return await getUserWorkspaces(dataConnect, { userId, appId })
 }
 ```
 
-This implementation provides a complete multi-app authentication and account management system with workspace support and profile management. The system is built on Firebase Authentication for secure user management and uses DataConnect for storing user data, workspaces, and profiles.
+### Profile Operations
+
+```typescript
+import { getProfile, getUserProfiles } from "one-person-empire"
+
+// Queries
+const getProfileData = async (token: string, uid: string) => {
+  const { dataConnect } = useFirebaseServer(token)
+  return await getProfile(dataConnect, { uid })
+}
+
+const listUserProfiles = async (token: string, userId: UUID, appId: string) => {
+  const { dataConnect } = useFirebaseServer(token)
+  return await getUserProfiles(dataConnect, { userId, appId })
+}
+```
+
+### Search Operations
+
+```typescript
+import { searchUsers, searchWorkspaces, searchProfiles } from "one-person-empire"
+
+const searchUsersData = async (token: string, query: string, appId: string, limit = 10) => {
+  const { dataConnect } = useFirebaseServer(token)
+  return await searchUsers(dataConnect, { query, appId, limit })
+}
+
+const searchWorkspacesData = async (token: string, query: string, appId: string, limit = 10) => {
+  const { dataConnect } = useFirebaseServer(token)
+  return await searchWorkspaces(dataConnect, { query, appId, limit })
+}
+
+const searchProfilesData = async (token: string, query: string, appId: string, limit = 10) => {
+  const { dataConnect } = useFirebaseServer(token)
+  return await searchProfiles(dataConnect, { query, appId, limit })
+}
+```
+
+This implementation provides a complete multi-app authentication and account management system using Firebase Authentication for secure user management and the generated DataConnect client from `one-person-empire` package for data operations. Each operation properly handles Firebase server initialization and error handling.

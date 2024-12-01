@@ -6,7 +6,7 @@ import cfg1 from "/Users/peetstander/Projects/pibs/node_modules/.pnpm/@shuriken-
 
 declare const inlineConfig = {
   "nuxt": {
-    "buildId": "3572727e-b08b-46df-8c3a-9e0adc62ce05"
+    "buildId": "07fd3ad7-9228-47c7-ad92-0e9a716e8300"
   },
   "__swiper": {
     "bundled": true
